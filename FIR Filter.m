@@ -3,6 +3,7 @@ clear all
 close all
 clc
 
+%--------------------------------------------------------------------------
 %Initializing FIR bandpass filter variables 
 A = 0;
 B = 1;
@@ -18,6 +19,7 @@ OmegaP2 = 600 +100*C;
 OmegaA1 = 200 +100*C;
 OmegaA2 = 750 +100*C;
 
+%--------------------------------------------------------------------------
 %calculating actual value of Ap
 deltaP = (10^(0.05*ApBar)-1)/(10^(0.05*ApBar)+1);
 deltaA = 10^(-0.05*AaBar);
@@ -55,6 +57,7 @@ else
     N = ceil(Napprox)+1;
 end
  
+%--------------------------------------------------------------------------
 %Determining window function 
 
 T    = 2*pi/OmegaS;
@@ -106,7 +109,7 @@ grid on
 
 Omega = OmegaS*n/(N-1);
 
-
+%--------------------------------------------------------------------------
 %Determining  frequency response of the Ideal Bandpass filter
 
 OmegaC1 = OmegaP1 - Bt/2;
@@ -123,6 +126,7 @@ for j = 1:length(n)
     end
 end
 
+%--------------------------------------------------------------------------
 %Determining time-domain  response of the Ideal bandpass filter
 len = length(n);
 h_time = zeros(1,len);
@@ -140,13 +144,14 @@ stem(n,h_time)
 title('Impulse Response'),xlabel('n'),ylabel('h(n)')
 grid on
 
+%--------------------------------------------------------------------------
 %Plotting impulse response of the digital filter
 h_FIR = h_time.*wk;
 [hOmega,w1] = freqz(h_FIR);
 
+%--------------------------------------------------------------------------
+%Determining FIR filter magnitude and amplitude response in the frequency domain
 
-%Determining FIR filter magnitude and amplitude response in the frequency
-%domain
 figure
 plot(w1/T,20*log(abs(hOmega)))
 axis([OmegaP1 OmegaP2 -ApBar/2 ApBar/2])
@@ -157,7 +162,8 @@ figure
 plot(w1/T,20*log10(abs(hOmega)))
 title('Magnitude Response of the digital filter'),xlabel('Frequency(rad/s)'),ylabel('|H(e(jwT))|')
 grid on
- 
+
+%--------------------------------------------------------------------------
 %Determining x(n)
 
 Omega1 = OmegaA1/2;
@@ -167,6 +173,7 @@ n_new= 1:500;
 x_n = sin(Omega1*n_new*T)+sin(Omega2*n_new*T)+sin(Omega3*n_new*T);
 X_Omega=fft(x_n,OmegaS/2);
 
+%--------------------------------------------------------------------------
 % Frequency Response and Time response of the Input Signal
 
 figure
@@ -180,6 +187,7 @@ ylabel('Magnitude(dB)')
 xlabel('Frequency(rad/s)')
 grid on
 
+%--------------------------------------------------------------------------
 % Compute the Output of the Ideal and FIR Bandpass Filter
 H_Fil=fft(h_FIR,OmegaS/2);
 Y_Omega=X_Omega.*H_Fil;
@@ -189,6 +197,7 @@ H_Fil=fft(h_time,OmegaS/2);
 Y_Out=X_Omega.*H_Fil;
 y_out=ifft(Y_Out);
 
+%--------------------------------------------------------------------------
 % Plot of Ideal Bandpass Filter Output and its frequency response
 figure
 stem(0:500,y_out(1:501))
@@ -202,6 +211,7 @@ ylabel('Y(w)/dB')
 xlabel(' Angular Frequency(rad/s)')
 grid on
 
+%--------------------------------------------------------------------------
 %plot of FIR Bandpass Filter Output and its frequency response
 figure
 stem(0:1:500,y_n(1:501))
@@ -214,9 +224,3 @@ plot(0:2:1800,abs(Y_Omega(1:901)))
 title('Frequency Response of the Output after the  Desinged Bandpass Filter')
 ylabel('Y(w)/dB'),xlabel('Angular Frequency(rad/s)')
 grid on
-
-
-
-
-
-
